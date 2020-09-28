@@ -1,9 +1,25 @@
 <?php
 
+/**
+ * GroupedStatistics Controller
+ * An addon plugin for public statistics that checks for same questions in other 
+ * activated surveys and add the responses to the public statistics 
+ * 
+ * 
+ * @author Eddy Lackmann <eddy.lackmann@limeSurvey.org>
+ * @license GPL 2.0 or later
+ * @category Plugin (Addon)
+ * @requires PublicStatistics Plugin 
+ */
+
+//Load libraries and components
 spl_autoload_register(function ($class_name) {
     if (preg_match("/^GS.*/", $class_name)) {
         if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . $class_name . '.php')) {
             include __DIR__ . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . $class_name . '.php';
+        }
+        if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class_name . '.php')) {
+            include __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . $class_name . '.php';
         }
     }
 });
@@ -17,38 +33,38 @@ class GroupedStatistics extends PluginBase
 
     public function init()
     {
-        /**
-         * Here you should handle subscribing to the events your plugin will handle
-         */
+
+        //Suscribe to plugin events in LS
         $this->subscribe('beforeActivate');
         $this->subscribe('beforeDeactivate');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newUnsecureRequest');
         $this->subscribe('newDirectRequest');
-    
     }
 
     /**
-     * Operations that run when the plugin is activated
+     * Operations that run before the plugin is activated
      * 
+     * @return void
      */
+
     public function beforeActivate()
     {
-        if(GSInstaller::model()->checkParentPlugin()){
+        if (GSInstaller::model()->checkParentPlugin()) {
             GSInstaller::model()->installMenues();
-            GSInstaller::model()->installAddonHooks();
+            GSInstaller::model()->installTables();
         }
-          
     }
 
     /**
-     * Operations that run when the plugin is deactivated
+     * Operations that run before the plugin is deactivate
      * 
+     * @return void
      */
     public function beforeDeactivate()
     {
         GSInstaller::model()->removeMenues();
-        GSInstaller::model()->removeAddonHooks();
+        GSInstaller::model()->uninstallTables();
     }
 
 
@@ -58,10 +74,10 @@ class GroupedStatistics extends PluginBase
      */
     public function beforeAdminMenuRender()
     {
-        //PSInstaller::model()->proccessUpdate();
+        //code
     }
 
-      /**
+    /**
      * Relay a direct request to the called method
      *
      * @return void
@@ -100,23 +116,159 @@ class GroupedStatistics extends PluginBase
 
 
     /**
-     * Render the setting page for a single survey
+     * Render the setting page of the grouped Statistics module
      * 
      * @return mixed
      * 
      */
     public function settings()
     {
+        //get current survey id
         $sid = Yii::app()->request->getParam('surveyid');
 
+        //Fetch setting of the survey id 
+        $oGSSurvey = GSSurveys::model()->findByAttributes(['sid' => $sid]);
+
+        //Check if settings exists | if not redirect to the not Ative page
+        if (!$oGSSurvey) {
+            return $this->renderPartial('notActive', ['sid' => $sid], true);
+        }
+
         $aData = [];
-       
+
+        //register scripts and css
+        $this->registerAssets();
+
+        //get survey list for the multiple selectbox
+        $aData["surveyList"] = GSHelper::getFilteredSurveyList($sid);
+        $aData["commonSurveys"] = json_decode($oGSSurvey->common_surveys);
+        $aData["commonQuestions"] = json_decode($oGSSurvey->common_questions, true);
+
         return $this->renderPartial('settings', $aData, true);
     }
-    
 
-    
-   
+
+    /**
+     * Initialise Grouped Statistics setting
+     * 
+     * @return mixed
+     * 
+     */
+    public function initStats()
+    {
+        $sid = Yii::app()->request->getPost('surveyid');
+
+        $oGSSurvey = GSSurveys::model()->findAllByAttributes(['sid' => $sid]);
+
+        if (!$oGSSurvey) {
+            $GS = new GSSurveys();
+            if ($GS->initStats($sid)) {
+                Yii::app()->setFlashMessage(PSTranslator::translate("Grouped statistics initiliased"), 'success');
+            } else {
+                Yii::app()->setFlashMessage(PSTranslator::translate("Error on initialisation"), 'error');
+            }
+        }
+
+        return Yii::app()->getController()->redirect(
+            Yii::app()->createUrl(
+                'admin/pluginhelper/sa/sidebody',
+                ['surveyid' => $sid, 'plugin' => 'GroupedStatistics', 'method' => 'settings']
+            )
+        );
+    }
+
+    /**
+     * Delete Grouped Statistics Setting and Hooks in the Public Statistics
+     * 
+     * @return mixed
+     * 
+     */
+    public function deactivateStats()
+    {
+        $sid = Yii::app()->request->getPost('surveyid');
+
+        $oGSSurvey = GSSurveys::model()->findByAttributes(['sid' => $sid]);
+
+
+        if ($oGSSurvey->deactivateStats()) {
+
+            Yii::app()->setFlashMessage(GSTranslator::translate("Grouped statistics deactivated"), 'success');
+        }
+
+        return Yii::app()->getController()->redirect(
+            Yii::app()->createUrl(
+                'admin/pluginhelper/sa/sidebody',
+                ['surveyid' => $sid, 'plugin' => 'GroupedStatistics', 'method' => 'settings']
+            )
+        );
+    }
+
+    /**
+     * Analyse the settings and check for common questions in selected surveys
+     * 
+     * @return mixed
+     * 
+     */
+
+    public function analyse()
+    {
+        //get survey id
+        $sid = Yii::app()->request->getPost('surveyid');
+
+        //retrieve selected surveys
+        $ids = Yii::app()->request->getPost('surveySelection');
+
+        if (!$ids) {
+            $ids = [];
+        }
+
+        //find current Grouped Survey data
+        $oGSSurvey = GSSurveys::model()->findByAttributes(['sid' => $sid]);
+
+        if ($oGSSurvey) {
+
+            //insert selected survey 
+            $oGSSurvey->common_surveys = json_encode($ids);
+            $result = [];
+
+            //get current survey questions
+            $baseQuestions = GSHelper::getSurveyBaseQuestions($sid);
+
+            //Compare each questions with base question
+            if ($baseQuestions && $ids) {
+                foreach ($ids as $id) {
+                    $result[$id] = GSHelper::compareQuestionsWithBaseSurvey($baseQuestions, $id);
+                }
+            }
+
+            //Insert result into the database
+            $oGSSurvey->common_questions = json_encode($result);
+
+            if ($oGSSurvey->save()) {
+                Yii::app()->setFlashMessage(GSTranslator::translate("Analyse done!!"), 'success');
+            }
+        }
+
+        return Yii::app()->getController()->redirect(
+            Yii::app()->createUrl(
+                'admin/pluginhelper/sa/sidebody',
+                ['surveyid' => $sid, 'plugin' => 'GroupedStatistics', 'method' => 'settings']
+            )
+        );
+    }
+
+
+    /**
+     * Register all assets of the plugins
+     *
+     * @return void
+     */
+    private function registerAssets()
+    {
+        $this->registerScript('assets/js/GroupedStatistics.js', LSYii_ClientScript::POS_END);
+        $this->registerScript('assets/js/bootstrap-select.min.js', LSYii_ClientScript::POS_END);
+        $this->registerCss('assets/css/bootstrap-select.min.css');
+    }
 
     /**
      * Adding a script depending on path of the plugin

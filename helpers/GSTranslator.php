@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Class GSTranslator
+ * a simple translation module for the plugin
+ * 
+ * @author Eddy Lackmann <eddy.lackmann@limeSurvey.org>
+ * @license GPL 2.0 or later
+ *
+ * 
+ */
 class GSTranslator
 {
 
@@ -61,7 +70,7 @@ class GSTranslator
                 "de" => "Für dieses Addon ist das PublicStatistics-Plugin auf Ihrem System erforderlich",
                 "fr" => "Cet addon nécessite le plugin PublicStatistics sur votre système"
             ],
-            
+
             "Please activate the PublicStatistics plugin first." => [
                 "en" => "Please activate the PublicStatistics plugin first.",
                 "de" => "Bitte aktivieren Sie zuerst das PublicStatistics Plugin.",
@@ -97,7 +106,7 @@ class GSTranslator
                 "de" => "Einstellung konnte nicht gespeichert werden",
                 "fr" => "Paramètres non sauvegardé"
             ],
-  
+
             "Available logins" => [
                 "en" => "Available logins",
                 "de" => "Verfügbare Anmeldungen",
@@ -141,7 +150,7 @@ class GSTranslator
                 "fr" => "Vous n'êtes pas autorisé à accéder à cette page."
             ],
 
-          
+
             "Generate" => [
                 "en" => "Generate",
                 "de" => "Generieren",

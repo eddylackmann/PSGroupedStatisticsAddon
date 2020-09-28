@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class GSInstaller 
+ * This clas handle all insltall / Unsinstall / Update operations of the plugin
+ * 
+ * @author Eddy Lackmann <eddy.lackmann@limeSurvey.org>
+ * @license GPL 2.0 or later
+ *
+ * 
+ */
+
 class GSInstaller
 {
 
@@ -13,28 +23,67 @@ class GSInstaller
 
         return self::$model;
     }
-
+    /**
+     * This function checks if the Parent statistics is installed
+     *
+     * @return bool 
+     */
     public function checkParentPlugin()
     {
         $oModel = Plugin::model()->findByAttributes(['name' => 'PublicStatistics']);
         if ($oModel) {
             if ($oModel->active == 1) {
                 return true;
-            }else{
-                throw new Exception(GSTranslator::translate('Please activate the PublicStatistics plugin first.'));   
+            } else {
+                throw new Exception(GSTranslator::translate('Please activate the PublicStatistics plugin first.'));
             }
-        }else{
+        } else {
             throw new Exception(GSTranslator::translate('This addon requires the PublicStatistics plugin on your system'));
-            
         }
     }
 
-    public function installAddonHooks()
+    /**
+     * Install all needed database Table
+     *
+     * @return void
+     */
+    public function installTables()
     {
 
-        return true;
+        $this->createTable('GSSurveys', array(
+            'sid' => 'pk',
+            'common_surveys' => 'text',
+            'common_questions' => 'text',
+            'stats_active' => 'int DEFAULT 0',
+            'last_analysed' => 'datetime DEFAULT NULL',
+        ));
     }
 
+
+    /**
+     * Delete database Tables of the plugin
+     *
+     * @return void
+     */
+
+    public function uninstallTables()
+    {
+
+        $oDB = Yii::app()->db;
+
+        if (tableExists('GSSurveys')) {
+
+            $oDB->createCommand()->dropTable('{{GSSurveys}}');
+        }
+    }
+
+
+
+    /**
+     * Install Menues for the frontend
+     *
+     * @return void
+     */
     public function installMenues()
     {
 
@@ -62,15 +111,10 @@ class GSInstaller
     }
 
     /**
-     * Removes all tables of the plugin.. 
+     * Remove all frontend menus 
      *
      * @return void
      */
-    public function removeAddonHooks()
-    {
-        return true;
-    }
-
     public function removeMenues()
     {
         $result = false;
