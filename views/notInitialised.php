@@ -1,6 +1,6 @@
 <?php
 /**
- * Not active View
+ * Not initialised View
  * 
  * 
  * @author Eddy Lackmann <eddy.lackmann@limeSurvey.org>
@@ -26,9 +26,14 @@
         <div class="row">
             <div class="col-sm-12 text-right ls-space margin bottom-10">
                 <div class="col-xs-12 jumbotron jumbotron-default well">
-                <h2> <?php echo  $title ?> </h2>
-                    <p class="lead"><?php echo  $message ?></p>
-                    
+                    <h2><?php echo  GSTranslator::translate("Module not initialised.") ?></h2>
+                    <p class="lead"><?php echo  PSTranslator::translate("") ?></p>
+                    <div class="col-sm-12 text-center ls-space margin bottom-10">
+                        <button type="submit" class="btn btn-success" id="ps--save-button">
+                            <i class="fa fa-rocket"></i>
+                            <?php echo  GSTranslator::translate("Initialise") ?>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

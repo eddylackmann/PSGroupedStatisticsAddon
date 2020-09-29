@@ -126,13 +126,13 @@ class GroupedStatistics extends PluginBase
         //get current survey id
         $sid = Yii::app()->request->getParam('surveyid');
 
+        if($this->checkStatus($sid)){
+            return $this->checkStatus($sid);
+        }
+        
+
         //Fetch setting of the survey id 
         $oGSSurvey = GSSurveys::model()->findByAttributes(['sid' => $sid]);
-
-        //Check if settings exists | if not redirect to the not Ative page
-        if (!$oGSSurvey) {
-            return $this->renderPartial('notActive', ['sid' => $sid], true);
-        }
 
         $aData = [];
 
@@ -163,9 +163,9 @@ class GroupedStatistics extends PluginBase
         if (!$oGSSurvey) {
             $GS = new GSSurveys();
             if ($GS->initStats($sid)) {
-                Yii::app()->setFlashMessage(PSTranslator::translate("Grouped statistics initiliased"), 'success');
+                Yii::app()->setFlashMessage(PSTranslator::translate("Initialized successfully"), 'success');
             } else {
-                Yii::app()->setFlashMessage(PSTranslator::translate("Error on initialisation"), 'error');
+                Yii::app()->setFlashMessage(PSTranslator::translate("Initialisation failed"), 'error');
             }
         }
 
@@ -192,7 +192,7 @@ class GroupedStatistics extends PluginBase
 
         if ($oGSSurvey->deactivateStats()) {
 
-            Yii::app()->setFlashMessage(GSTranslator::translate("Grouped statistics deactivated"), 'success');
+            Yii::app()->setFlashMessage(GSTranslator::translate("Reseted"), 'success');
         }
 
         return Yii::app()->getController()->redirect(
@@ -245,7 +245,7 @@ class GroupedStatistics extends PluginBase
             $oGSSurvey->common_questions = json_encode($result);
 
             if ($oGSSurvey->save()) {
-                Yii::app()->setFlashMessage(GSTranslator::translate("Analyse done!!"), 'success');
+                Yii::app()->setFlashMessage(GSTranslator::translate("Check successfully done"), 'success');
             }
         }
 
@@ -257,6 +257,38 @@ class GroupedStatistics extends PluginBase
         );
     }
 
+    /**
+     * Check if Survey or Public statistics are active
+     *
+     * @param int $sid Survey id
+     * @return void
+     */
+    private function checkStatus($sid)
+    {
+        $oGSSurvey = GSSurveys::model()->findByPk($sid);
+        $oSurvey = Survey::model()->findByPk($sid);
+        
+        if ($oSurvey->active != "Y") {
+            $title =  GSTranslator::translate("Survey not active");
+            $message = GSTranslator::translate("This addon is only available for an activated survey!");
+            return $this->renderPartial('notActive', ['sid' => $sid, "title" => $title, "message" => $message], true);
+        }
+
+        if (class_exists("PSSurveys")) {
+            $PSSurvey = PSSurveys::model()->findByPk($sid);
+            if (!$PSSurvey || $PSSurvey->activated == 0) {
+                $title =  GSTranslator::translate("Public Statistics not active");
+                $message = GSTranslator::translate("Please activate the public statistics first!");
+                return $this->renderPartial('notActive', ['sid' => $sid, "title" => $title, "message" => $message], true);
+            }
+        }
+
+        if ($oGSSurvey == null) {
+            return $this->renderPartial('notInitialised', ['sid' => $sid], true);
+        }
+
+        return false;
+    }
 
     /**
      * Register all assets of the plugins

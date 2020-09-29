@@ -156,6 +156,97 @@ class GSTranslator
                 "de" => "Generieren",
                 "fr" => "Générer"
             ],
+
+            "Reset" => [
+                "en" => "Reset",
+                "de" => "Zurücksetzen",
+                "fr" => "Réinitialiser"
+            ],
+            
+            "Select surveys" => [
+                "en" => "Select surveys",
+                "de" => "Umfragen auswählen",
+                "fr" => "Sélectionnez questionaires"
+            ],
+             
+            "Check" => [
+                "en" => "Check",
+                "de" => "Prüfen",
+                "fr" => "Vérifier"
+            ],
+             
+            "Reseted" => [
+                "en" => "Reseted",
+                "de" => "Zurückgesetzt",
+                "fr" => "Réinitialisé"
+            ],
+
+            "Check successfully done" => [
+                "en" => "Check successfully done",
+                "de" => "Erfolgreich geprüft",
+                "fr" => "Vérifié avec succès"
+            ],
+
+            "Initialized successfully" => [
+                "en" => "Initialized successfully",
+                "de" => "Erfolgreich initialisiert",
+                "fr" => "Initialisé avec succès"
+            ],
+
+            "Initialisation failed" => [
+                "en" => "Initialisation failed",
+                "de" => "Initialisierung fehlgeschlagen",
+                "fr" => "Erreurs lors de l'initialisation"
+            ],
+
+            "Initialise" => [
+                "en" => "Initialise",
+                "de" => "Initialisieren",
+                "fr" => "Initialiser"
+            ],
+
+            "Module not initialised." => [
+                "en" => "Module not initialised.",
+                "de" => "Modul nicht initialisiert.",
+                "fr" => "Module non initialisé."
+            ],
+
+            "Survey not active" => [
+                "en" => "Survey not active",
+                "de" => "Umfrage nicht aktiv",
+                "fr" => "Questionnaire non actif"
+            ],
+
+            "Public Statistics not active" => [
+                "en" => "Public Statistics not active.",
+                "de" => "Öffentliche Statistik nicht aktiviert",
+                "fr" => "Statistiques publiques non actives"
+            ],
+
+            "Please activate the public statistics first!" => [
+                "en" => "Please activate the public statistics first!",
+                "de" => "Bitte aktivieren Sie zuerst die öffentlichen Statistiken!",
+                "fr" => "Veuillez d'abord activer les statistiques publiques!"
+            ],
+
+            "This addon is only available for an activated survey!" => [
+                "en" => "This addon is only available for an activated survey!",
+                "de" => "Diese Erweiterung ist nur für eine aktivierte Umfrage verfügbar!",
+                "fr" => "Cet addon n'est disponible que pour un questionnaire activé!"
+            ],
+
+            "Title" => [
+                "en" => "Title",
+                "de" => "Titel",
+                "fr" => "Titre"
+            ],
+
+            "Common questions" => [
+                "en" => "Common questions",
+                "de" => "Gemeinsame Fragen",
+                "fr" => "Questions courantes"
+            ],            
+
         ];
 
         return $translations;
