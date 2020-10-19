@@ -162,19 +162,19 @@ class GSTranslator
                 "de" => "Zurücksetzen",
                 "fr" => "Réinitialiser"
             ],
-            
+
             "Select surveys" => [
                 "en" => "Select surveys",
                 "de" => "Umfragen auswählen",
                 "fr" => "Sélectionnez questionaires"
             ],
-             
+
             "Check" => [
                 "en" => "Check",
                 "de" => "Prüfen",
                 "fr" => "Vérifier"
             ],
-             
+
             "Reseted" => [
                 "en" => "Reseted",
                 "de" => "Zurückgesetzt",
@@ -245,8 +245,32 @@ class GSTranslator
                 "en" => "Common questions",
                 "de" => "Gemeinsame Fragen",
                 "fr" => "Questions courantes"
-            ],            
+            ],
 
+
+            "Synchronize" => [
+                "en" => "Synchronize",
+                "de" => "Synchronisieren",
+                "fr" => "Synchroniser"
+            ],
+
+            "The results were successfully synchronized" => [
+                "en" => "The results were successfully synchronized",
+                "de" => "Die Ergebnisse wurden erfolgreich synchronisiert",
+                "fr" => "Les résultats ont été synchronisés avec succès"
+            ],
+
+            "Addon Notice" => [
+                "en" => "This addon helps you to integrate responses from other surveys (With same question code and question Type) into the public statistics.Please select and analyse surveys to find out how many common questions they have.",
+                "de" => "Mit diesem Addon können Sie Antworten aus anderen Umfragen (mit demselben Fragencode und Fragetyp) in die öffentlichen Statistiken integrieren.Bitte wählen Sie Umfragen aus und analysieren Sie sie, um herauszufinden, wie viele gemeinsame Fragen sie haben.",
+                "fr" => "Cet addon vous aide à intégrer les réponses d'autres enquêtes (avec le même code de question et le même type de question) dans les statistiques publiques.Veuillez sélectionner et analyser les sondages pour connaître le nombre de questions courantes qu'ils ont"
+            ],
+
+            "Make sure to synchronize the result (to the public statistics)" => [
+                "en" => "Make sure to synchronize the result (to the public statistics)",
+                "de" => "Stellen Sie sicher, dass Sie das Ergebnis synchronisieren (mit der öffentlichen Statistik)",
+                "fr" => "Assurez-vous de synchroniser le résultat (avec les statistiques publiques)"
+            ],
         ];
 
         return $translations;
