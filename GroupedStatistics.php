@@ -65,6 +65,7 @@ class GroupedStatistics extends PluginBase
     {
         GSInstaller::model()->removeMenues();
         GSInstaller::model()->uninstallTables();
+        GSHelper::deleteHook();
     }
 
 
@@ -126,10 +127,10 @@ class GroupedStatistics extends PluginBase
         //get current survey id
         $sid = Yii::app()->request->getParam('surveyid');
 
-        if($this->checkStatus($sid)){
+        if ($this->checkStatus($sid)) {
             return $this->checkStatus($sid);
         }
-        
+
 
         //Fetch setting of the survey id 
         $oGSSurvey = GSSurveys::model()->findByAttributes(['sid' => $sid]);
@@ -189,8 +190,7 @@ class GroupedStatistics extends PluginBase
 
         $oGSSurvey = GSSurveys::model()->findByAttributes(['sid' => $sid]);
 
-
-        if ($oGSSurvey->deactivateStats()) {
+        if ($oGSSurvey->deactivateStats() && GSHelper::deleteHook($sid)) {
 
             Yii::app()->setFlashMessage(GSTranslator::translate("Reseted"), 'success');
         }
@@ -241,12 +241,38 @@ class GroupedStatistics extends PluginBase
                 }
             }
 
+
             //Insert result into the database
             $oGSSurvey->common_questions = json_encode($result);
 
             if ($oGSSurvey->save()) {
+
                 Yii::app()->setFlashMessage(GSTranslator::translate("Check successfully done"), 'success');
             }
+        }
+
+        return Yii::app()->getController()->redirect(
+            Yii::app()->createUrl(
+                'admin/pluginhelper/sa/sidebody',
+                ['surveyid' => $sid, 'plugin' => 'GroupedStatistics', 'method' => 'settings']
+            )
+        );
+    }
+
+    /**
+     * Analyse the settings and check for common questions in selected surveys
+     * 
+     * @return mixed
+     * 
+     */
+
+    public function synchronize()
+    {
+        //get survey id
+        $sid = Yii::app()->request->getPost('surveyid');
+
+        if (GSHelper::synchronizeToPublicStatistics($sid)) {
+            Yii::app()->setFlashMessage(GSTranslator::translate("The results were successfully synchronized"), 'success');
         }
 
         return Yii::app()->getController()->redirect(
@@ -267,7 +293,7 @@ class GroupedStatistics extends PluginBase
     {
         $oGSSurvey = GSSurveys::model()->findByPk($sid);
         $oSurvey = Survey::model()->findByPk($sid);
-        
+
         if ($oSurvey->active != "Y") {
             $title =  GSTranslator::translate("Survey not active");
             $message = GSTranslator::translate("This addon is only available for an activated survey!");
