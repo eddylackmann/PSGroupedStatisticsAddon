@@ -24,8 +24,10 @@
                 <input type="hidden" name="surveyid" value="<?php echo  Yii::app()->request->getParam('surveyid'); ?>">
             </div>
             <div class="col-sm-6  ls-space margin bottom-10 ">
-                This addons helps you to integrate responses of other surveys (With same question and question Type) into the public statistics.
-                Please select and analyse surveys to find how many common question they have.
+                <p><?php echo GSTranslator::translate("Addon Notice"); ?></p>
+
+                <p> <?php echo GSTranslator::translate("Make sure to synchronize the result (to the public statistics)"); ?> </p>
+
             </div>
             <div class="col-sm-3 text-right ls-space margin bottom-10 pull-right">
                 <button type="submit" class="btn btn-default" id="">
@@ -71,14 +73,29 @@
                     <i class="fa fa-arrow-right"></i>
                     <?php echo  GSTranslator::translate("Check") ?>
                 </button>
+
             </div>
             </form>
+
         </div>
 
         <hr>
 
         <div class="row">
+            <?php if ((isset($commonSurveys) && $commonSurveys)) : ?>
+                <?php echo TbHtml::form(array("plugins/direct/plugin/GroupedStatistics/method/synchronize"), 'post', array('name' => 'GSSettings-reset', 'id' => 'GSSettings-reset')); ?>
+                <input type="hidden" name="surveyid" value="<?php echo  Yii::app()->request->getParam('surveyid'); ?>">
+                <div class="col-sm-12 text-left ls-space margin bottom-10 pull-right">
+                    <button type="submit" class="btn btn-default" id="">
+                        <i class="fa fa-arrow-right"></i>
+                        <?php echo  GSTranslator::translate("Synchronize") ?>
+                    </button>
+
+                </div>
+                </form>
+            <?php endif; ?>
             <div class="col-sm-12 text-left ls-space margin bottom-10">
+
                 <table class="table">
                     <thead>
                         <tr>
@@ -114,7 +131,7 @@
                                 </tr>
                             <?php endforeach; ?>
                         <?php else : ?>
-
+                            <p class="text-center text-warning"> <strong> <?php echo  GSTranslator::translate("No data found") ?></strong> </p>
                         <?php endif; ?>
                     </tbody>
                 </table>
