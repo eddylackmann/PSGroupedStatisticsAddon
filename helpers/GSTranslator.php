@@ -254,6 +254,18 @@ class GSTranslator
                 "fr" => "Synchroniser"
             ],
 
+            "Public Statistics plugin not found" => [
+                "en" => "Public Statistics plugin not found",
+                "de" => "Öffentliches Statistik-Plugin nicht gefunden",
+                "fr" => "Le Plug-in de statistiques publiques introuvable"
+            ],
+
+            "Please activate or install the public statistics plugin first!" => [
+                "en" => "Please activate or install the public statistics plugin first!",
+                "de" => "Bitte aktivieren oder installieren Sie zuerst das öffentliche Statistik-Plugin!",
+                "fr" => "Veuillez d'abord activer ou installer le plugin de statistiques publiques!"
+            ],
+
             "The results were successfully synchronized" => [
                 "en" => "The results were successfully synchronized",
                 "de" => "Die Ergebnisse wurden erfolgreich synchronisiert",

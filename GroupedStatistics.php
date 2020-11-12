@@ -294,6 +294,12 @@ class GroupedStatistics extends PluginBase
         $oGSSurvey = GSSurveys::model()->findByPk($sid);
         $oSurvey = Survey::model()->findByPk($sid);
 
+        if (!class_exists("PSSurveys")) {
+            $title =  GSTranslator::translate("Public Statistics plugin not found");
+            $message = GSTranslator::translate("Please activate or install the public statistics plugin first!");
+            return $this->renderPartial('notActive', ['sid' => $sid, "title" => $title, "message" => $message], true);
+        }
+
         if ($oSurvey->active != "Y") {
             $title =  GSTranslator::translate("Survey not active");
             $message = GSTranslator::translate("This addon is only available for an activated survey!");
