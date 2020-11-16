@@ -55,7 +55,7 @@ class GSInstaller
             'common_surveys' => 'text',
             'common_questions' => 'text',
             'stats_active' => 'int DEFAULT 0',
-            'last_analysed' => 'datetime DEFAULT NULL',
+            'last_synchronized' => 'datetime DEFAULT NULL',
         ));
     }
 

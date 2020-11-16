@@ -254,6 +254,12 @@ class GSTranslator
                 "fr" => "Synchroniser"
             ],
 
+            "Last synchronisation" => [
+                "en" => "Last synchronisation",
+                "de" => "Letzte Synchronisation",
+                "fr" => "Dernière synchronisation"
+            ],
+
             "Public Statistics plugin not found" => [
                 "en" => "Public Statistics plugin not found",
                 "de" => "Öffentliches Statistik-Plugin nicht gefunden",

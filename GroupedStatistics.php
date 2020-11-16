@@ -142,6 +142,7 @@ class GroupedStatistics extends PluginBase
 
         //get survey list for the multiple selectbox
         $aData["surveyList"] = GSHelper::getFilteredSurveyList($sid);
+        $aData["last_sync"] = $oGSSurvey->last_synchronized ;
         $aData["commonSurveys"] = json_decode($oGSSurvey->common_surveys);
         $aData["commonQuestions"] = json_decode($oGSSurvey->common_questions, true);
 

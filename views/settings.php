@@ -90,7 +90,13 @@
                         <i class="fa fa-arrow-right"></i>
                         <?php echo  GSTranslator::translate("Synchronize") ?>
                     </button>
-
+                    <br>
+                    <br>
+                    <p><?php echo  GSTranslator::translate("Last synchronisation").": "; ?>
+                        <?php if ($last_sync != NULL) : ?>
+                            <?php echo " <span class= 'text-info'>" . date("d.m.Y - H:i:s", strtotime($last_sync)) . "</span>"; ?>
+                        <?php endif; ?>
+                    </p>
                 </div>
                 </form>
             <?php endif; ?>

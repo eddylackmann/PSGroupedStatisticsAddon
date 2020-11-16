@@ -1,5 +1,7 @@
 <?php
 
+use Zend\Http\Header\Date;
+
 /**
  * Class GSHelper
  * some helper functionalities of the plugin to get the controller clean 
@@ -125,6 +127,10 @@ class GSHelper
             $data = json_decode($settings->common_questions);
             if (class_exists('PSHooksHelper')) {
                 $result = PSHooksHelper::appendHooks('addRelatedSurveyResponses', $sid, $data);
+                if($result){
+                    $settings->last_synchronized =  new CDbExpression('NOW()');
+                    $settings->save();
+                }
             }
         }
 
